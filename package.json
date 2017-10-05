@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/nitika11073/test_repo/issues"
   },
-  "homepage": "https://github.com/nitika11073/test_repo#readme"
+  "homepage": "https://github.com/nitika11073/test_repo#readme",
+  "devDependencies": {
+    "date-fns": "^1.28.5",
+    "lodash.get": "^4.4.2"
+  }
 }
