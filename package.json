@@ -1,0 +1,19 @@
+{
+  "name": "one-self-serve",
+  "version": "1.0.0",
+  "description": "Single code base for desktop and mobile",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitika11073/test_repo.git"
+  },
+  "author": "Nitika Jain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nitika11073/test_repo/issues"
+  },
+  "homepage": "https://github.com/nitika11073/test_repo#readme"
+}
