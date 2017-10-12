@@ -17,7 +17,12 @@
   },
   "homepage": "https://github.com/nitika11073/test_repo#readme",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
     "date-fns": "^1.28.5",
     "lodash.get": "^4.4.2"
+  },
+  "babel": {
+      "presets": ["env"]
   }
 }

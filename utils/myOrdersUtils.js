@@ -1,16 +1,11 @@
-import safeTraverse from 'lodash/get';
+import _get from 'lodash/get';
 import formatDate from 'date-fns/format';
 import { getParentItem, getGroceryBasketFields, segregateOrdersIntoGroups } from 'utils/orderUtils';
-import { GROUP_TYPES } from 'constants/OrderConstants';
 
-export const retOne = () => {
-	return 2;
-}
-
-export const getOrders = data => {
+const getOrders = data => {
 	if (!data) return null;
 
-	const ordersList = safeTraverse(data, ['orderGranularDetails']);
+	const ordersList = _get(data, ['orderGranularDetails']);
 	return ordersList ? ordersList.map(order => getOrder(order)) : null;
 };
 
@@ -20,17 +15,17 @@ const getOrder = order => {
 
 	return {
 		items: getItemGroups(order),
-		orderId: safeTraverse(order, ['orderId']),
-		orderDate: getFormattedDate(safeTraverse(order, ['orderDate'])),
-		promiseDate: getFormattedDate(safeTraverse(order, ['orderLvlPromiseDate'])),
-		totalAmount: safeTraverse(order, ['amount']),
-		numberOfItems: safeTraverse(order, ['numberOfItems']),
-		orderDetailLink: orderDetailsLinkPreStr + safeTraverse(order, ['orderId']),
-		orderType: safeTraverse(order, ['orderType']),
-		orderSubType: safeTraverse(order, ['orderSubType']),
-		customerInfo: safeTraverse(order, ['customerInfo']),
-		orderCancellationAllowed: safeTraverse(order, ['orderCancellationAllowed']),
-		orderNotifications: safeTraverse(order, ['orderNotifications', 0])
+		orderId: _get(order, ['orderId']),
+		orderDate: getFormattedDate(_get(order, ['orderDate'])),
+		promiseDate: getFormattedDate(_get(order, ['orderLvlPromiseDate'])),
+		totalAmount: _get(order, ['amount']),
+		numberOfItems: _get(order, ['numberOfItems']),
+		orderDetailLink: orderDetailsLinkPreStr + _get(order, ['orderId']),
+		orderType: _get(order, ['orderType']),
+		orderSubType: _get(order, ['orderSubType']),
+		customerInfo: _get(order, ['customerInfo']),
+		orderCancellationAllowed: _get(order, ['orderCancellationAllowed']),
+		orderNotifications: _get(order, ['orderNotifications', 0])
 	};
 };
 
@@ -43,8 +38,8 @@ const getOrder = order => {
  * 					Child orderItems are added in the childItems array, within the parent items
  */
 export const getItemGroups = order => {
-	const groupedItems = safeTraverse(order, ['groupedItems']);
-	const itemTypeGroups = safeTraverse(order, ['itemTypeGroups']) || {};
+	const groupedItems = _get(order, ['groupedItems']);
+	const itemTypeGroups = _get(order, ['itemTypeGroups']) || {};
 
 	const basketDetails = getGroceryBasketDetails(itemTypeGroups);
 
@@ -59,7 +54,7 @@ const getItems = groupedItems => {
 	let childItemIds = [];
 
 	mainItems.forEach(item => {
-		const childItem = safeTraverse(item, ['data', 'childItemId']);
+		const childItem = _get(item, ['data', 'childItemId']);
 		if (childItem) {
 			childItemIds = childItemIds.concat(childItem);
 		}
@@ -68,7 +63,7 @@ const getItems = groupedItems => {
 		return childItemIds.indexOf(item.data.itemId) === -1;
 	});
 	parentItems = parentItems.map(item => {
-		const childItemId = safeTraverse(item, ['data', 'childItemId']);
+		const childItemId = _get(item, ['data', 'childItemId']);
 		const childItem = mainItems.reduce((childItem, item) => {
 			if (childItemId && childItemId.indexOf(item.data.itemId) !== -1) {
 				childItem.push(item);
@@ -94,41 +89,41 @@ const getItem = (item, info) => {
 const getItemInfo = (mainItem, info) => {
 	if (!mainItem) return null;
 	const _item = {
-		groupType: safeTraverse(mainItem, ['groupType']),
-		fsn: safeTraverse(mainItem, ['fsn']),
-		title: safeTraverse(mainItem, ['title']),
-		amount: safeTraverse(mainItem, ['amount']),
-		quantity: safeTraverse(mainItem, ['quantity']),
-		type: safeTraverse(mainItem, ['itemType']),
-		subType: safeTraverse(mainItem, ['itemSubType']),
-		omniStatus: safeTraverse(mainItem, ['status']) || '',
-		status: safeTraverse(mainItem, ['desktopStatus']) || '',
-		subStatus: safeTraverse(mainItem, ['desktopSubStatus']) || '',
-		returnBadge: safeTraverse(mainItem, ['returnBadge']),
-		metadata: safeTraverse(mainItem, ['itemMetadata']),
-		childItemId: safeTraverse(mainItem, ['associatedOrderItemIds']),
-		abbData: safeTraverse(mainItem, ['assuredBuyBackData']),
+		groupType: _get(mainItem, ['groupType']),
+		fsn: _get(mainItem, ['fsn']),
+		title: _get(mainItem, ['title']),
+		amount: _get(mainItem, ['amount']),
+		quantity: _get(mainItem, ['quantity']),
+		type: _get(mainItem, ['itemType']),
+		subType: _get(mainItem, ['itemSubType']),
+		omniStatus: _get(mainItem, ['status']) || '',
+		status: _get(mainItem, ['desktopStatus']) || '',
+		subStatus: _get(mainItem, ['desktopSubStatus']) || '',
+		returnBadge: _get(mainItem, ['returnBadge']),
+		metadata: _get(mainItem, ['itemMetadata']),
+		childItemId: _get(mainItem, ['associatedOrderItemIds']),
+		abbData: _get(mainItem, ['assuredBuyBackData']),
 		lastProgressText: getLastEventDateText(mainItem),
-		itemId: safeTraverse(mainItem, ['orderItemId']),
-		unitId: safeTraverse(mainItem, ['orderItemUnitIdString']),
+		itemId: _get(mainItem, ['orderItemId']),
+		unitId: _get(mainItem, ['orderItemUnitIdString']),
 		shipmentTracking: getShipmentTrackingInfo(mainItem),
-		promiseFromDate: getFormattedDate(safeTraverse(mainItem, ['promiseFromDate'])),
-		promisedDate: getFormattedDate(safeTraverse(mainItem, ['promisedDate'])),
-		deliveryDate: getFormattedDate(safeTraverse(mainItem, ['actualDeliveredDate'])),
-		offersCount: (safeTraverse(mainItem, ['itemOffers']) && mainItem.itemOffers.length) || 0,
+		promiseFromDate: getFormattedDate(_get(mainItem, ['promiseFromDate'])),
+		promisedDate: getFormattedDate(_get(mainItem, ['promisedDate'])),
+		deliveryDate: getFormattedDate(_get(mainItem, ['actualDeliveredDate'])),
+		offersCount: (_get(mainItem, ['itemOffers']) && mainItem.itemOffers.length) || 0,
 		flags: {
-			itemCancellable: safeTraverse(mainItem, ['itemCancellable']),
-			itemReturnable: safeTraverse(mainItem, ['itemReturnable']),
-			itemReviewable: safeTraverse(mainItem, ['itemReviewable']),
-			itemSchedulable: safeTraverse(mainItem, ['itemSchedulable']),
-			isPreOrder: safeTraverse(mainItem, ['preOrder'])
+			itemCancellable: _get(mainItem, ['itemCancellable']),
+			itemReturnable: _get(mainItem, ['itemReturnable']),
+			itemReviewable: _get(mainItem, ['itemReviewable']),
+			itemSchedulable: _get(mainItem, ['itemSchedulable']),
+			isPreOrder: _get(mainItem, ['preOrder'])
 		},
-		seller: safeTraverse(mainItem, ['sellerName']),
-		sellerUrl: safeTraverse(mainItem, ['sellerUrl']),
-		serviceItemInfo: safeTraverse(mainItem, ['serviceItemInfo']),
-		vasItemDetails: safeTraverse(mainItem, ['vasItemDetails'])
+		seller: _get(mainItem, ['sellerName']),
+		sellerUrl: _get(mainItem, ['sellerUrl']),
+		serviceItemInfo: _get(mainItem, ['serviceItemInfo']),
+		vasItemDetails: _get(mainItem, ['vasItemDetails'])
 	};
-	if (_item.vasItemDetails && safeTraverse(_item, ['metadata', 'url'])) _item.metadata.url = '';
+	if (_item.vasItemDetails && _get(_item, ['metadata', 'url'])) _item.metadata.url = '';
 	return _item;
 };
 
@@ -187,7 +182,7 @@ const getStatusList = (
 	if (!list || list.length === 0) return null;
 
 	const refinedList = list.filter(function (item) {
-		return safeTraverse(item, [type]) !== 'Splitted';
+		return _get(item, [type]) !== 'Splitted';
 	});
 
 	if (type === 'refundStatus') {
@@ -229,15 +224,15 @@ const getFormattedDate = dateObj => {
 const getLastEventDateText = item => {
 	if (!item) return null;
 	const connector = ' on ';
-	const steps = safeTraverse(item, ['itemProgressSteps']);
+	const steps = _get(item, ['itemProgressSteps']);
 	const lastStep = steps ? steps[steps.length - 1].children : null;
 	const lastEventDate = lastStep ? lastStep[lastStep.length - 1].eventDate : null;
 	return lastEventDate ? connector + formatDate(lastEventDate, "ddd, MMM Do 'YY") : null;
 };
 
 const getShipmentTrackingInfo = item => {
-	if (!item || safeTraverse(item, ['status']) !== 'Shipped') return null;
-	const progressSteps = safeTraverse(item, ['itemProgressSteps']);
+	if (!item || _get(item, ['status']) !== 'Shipped') return null;
+	const progressSteps = _get(item, ['itemProgressSteps']);
 	const shippedStep =
 		progressSteps &&
 		progressSteps.filter(function (step) {
@@ -247,7 +242,7 @@ const getShipmentTrackingInfo = item => {
 			);
 		});
 	const shippedChild =
-		safeTraverse(shippedStep, [0, 'children']) &&
+		_get(shippedStep, [0, 'children']) &&
 		shippedStep[0].children.filter(function (child) {
 			return (
 				child.eventLink &&
@@ -257,17 +252,17 @@ const getShipmentTrackingInfo = item => {
 		});
 	if (shippedChild) {
 		return {
-			shipmentLink: safeTraverse(shippedChild, [0, 'eventLink']),
-			shipmentText: safeTraverse(shippedChild, [0, 'eventLinkText'])
+			shipmentLink: _get(shippedChild, [0, 'eventLink']),
+			shipmentText: _get(shippedChild, [0, 'eventLinkText'])
 		};
 	}
 	return null;
 };
 
 const getGroceryBasketDetails = itemTypeGroups => {
-	const groceryGroup = safeTraverse(itemTypeGroups, [GROUP_TYPES.GROCERY]);
+	const groceryGroup = _get(itemTypeGroups, [GROUP_TYPES.GROCERY]);
 
 	return Object.assign({}, getGroceryBasketFields(groceryGroup), {
-		basketStatus: safeTraverse(groceryGroup, ['status'])
+		basketStatus: _get(groceryGroup, ['status'])
 	});
 };

@@ -1,11 +1,8 @@
-import safeTraverse from 'utils/safeTraverse';
+import _get from 'lodash/get';
 import format from 'date-fns/format';
-import isAfter from 'date-fns/is_after';
-import {getFormattedSlot} from 'utils/scheduleDeliveryUtils';
-import { stringTemplate } from 'components/StringWidget/StringWidget';
 import {pick} from 'lodash';
 import { GROUP_TYPES } from 'constants/OrderConstants';
-
+import { getParentItem, getGroceryBasketFields, segregateOrdersIntoGroups } from 'utils/orderUtils';
 const {FLIPKART, GROCERY} = GROUP_TYPES;
 
 export const MAX_AUTO_LOAD_PAGES = 4;
@@ -73,7 +70,7 @@ export const segregateOrdersIntoGroups = (orderGranularDetails, groupedItems, gr
 	groupedItems.forEach(groupedItem => {
 		//	data structure is different for myOrders and orderDetailsdata.
 		//	should take it up in future.
-		const orderData = safeTraverse(groupedItem, ['data'], groupedItem);
+		const orderData = _get(groupedItem, ['data'], groupedItem);
 
 		switch (orderData.groupType) {
 			case FLIPKART: if (findItem(flipkartItemTypeList, orderData.unitId)) {
@@ -95,7 +92,7 @@ export const segregateOrdersIntoGroups = (orderGranularDetails, groupedItems, gr
 	groceryItems.length > 0 && finalItems.push(Object.assign({}, groceryBasketDetails, {
 		orderItems: groceryItems,
 		unitIdsString: cancellableItems.map(item => {
-			const orderData = safeTraverse(item, ['data'], item);
+			const orderData = _get(item, ['data'], item);
 			return orderData.unitId;
 		}).join(',')
 	}));
@@ -107,16 +104,20 @@ export const segregateOrdersIntoGroups = (orderGranularDetails, groupedItems, gr
 export const getGroceryBasketFields = groceryData => {
 	return {
 		groupType: GROCERY,
-		returnPolicy: safeTraverse(groceryData, ['returnPolicy']),
-		basketAmount: safeTraverse(groceryData, ['groupAmount']),
-		basketSellerName: safeTraverse(groceryData, ['groupSellerName']),
-		basketSellerLink: safeTraverse(groceryData, ['groupSellerLink']),
-		basketOffersCount: safeTraverse(groceryData, ['groupOffersCount']),
-		basketLevelOffers: safeTraverse(groceryData, ['groupLevelOffers']),
-		basketStatusCount: safeTraverse(groceryData, ['statusCounts']),
-		basketDeliveryStatus: safeTraverse(groceryData, ['desktopStatus']),
-		basketSubStatus: safeTraverse(groceryData, ['desktopSubStatus']),
-		basketCancellable: safeTraverse(groceryData, ['basketCancellable'])
+		returnPolicy: _get(groceryData, ['returnPolicy']),
+		basketAmount: _get(groceryData, ['groupAmount']),
+		basketSellerName: _get(groceryData, ['groupSellerName']),
+		basketSellerLink: _get(groceryData, ['groupSellerLink']),
+		basketOffersCount: _get(groceryData, ['groupOffersCount']),
+		basketLevelOffers: _get(groceryData, ['groupLevelOffers']),
+		basketStatusCount: _get(groceryData, ['statusCounts']),
+		basketDeliveryStatus: _get(groceryData, ['desktopStatus']),
+		basketSubStatus: _get(groceryData, ['desktopSubStatus']),
+		basketCancellable: _get(groceryData, ['basketCancellable'])
 	};
 };
 
+
+const getItemTypeList = (ordersData, groupType) => {
+	return ordersData && _get(ordersData, ['itemTypeGroups', groupType, 'itemTypeList']);
+};
